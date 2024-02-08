@@ -16,18 +16,18 @@ const pool = new Pool({
 
 
 pool.query(`
-  SELECT teachers.name as name, cohorts.name as cohort_name
-  FROM teachers
-  JOIN assistance_requests
-  ON assistance_requests.teacher_id = teachers.id
-  JOIN students
-  ON students.id = assistance_requests.student_id
-  JOIN cohorts 
-  ON cohorts.id = students.cohort_id
-  WHERE cohorts.name like '${cohort}%'
-  GROUP BY teachers.name, cohorts.name
-  ORDER BY teachers.name
-`
+    SELECT teachers.name as name, cohorts.name as cohort_name
+    FROM teachers
+    JOIN assistance_requests
+    ON assistance_requests.teacher_id = teachers.id
+    JOIN students
+    ON students.id = assistance_requests.student_id
+    JOIN cohorts 
+    ON cohorts.id = students.cohort_id
+    WHERE cohorts.name LIKE $1
+    GROUP BY teachers.name, cohorts.name
+    ORDER BY teachers.name`,
+  [`%${cohort}%`]
 ).then (res => {
   res.rows.forEach(teacher => {
     console.log(`${teacher.cohort_name}: ${teacher.name}`)
